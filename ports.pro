@@ -28,4 +28,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    MainWindow.xml
+    MainWindow.xml \
+    images/logo.ico \
+    logo.ico
+
+RESOURCES += \
+    resources.qrc
+
+RC_ICON=logo.ico

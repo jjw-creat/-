@@ -23,12 +23,12 @@ private slots:
     void onDebuggerRemoved(const QString &portName);
     void onSerialConnected(const QString &portName);
     void onSerialDisconnected();
-
+    void on_btnSend_clicked();
+    void updateStats();
     void on_btnManualRefresh_clicked();
     void on_btnConnect_clicked();
     void on_btnDisconnect_clicked();
     void on_listDevices_itemDoubleClicked(QListWidgetItem *item);
-
 private:
     void setupUI();
     void setupConnections();
@@ -40,4 +40,6 @@ private:
     AutoDetectManager *m_autoDetect;
     SerialPortManager *m_serialManager;
     bool m_isConnected;
+    quint64 m_rxBytes = 0;
+    quint64 m_txBytes = 0;
 };

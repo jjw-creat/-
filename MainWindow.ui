@@ -6,64 +6,386 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>700</height>
+    <width>960</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ServeDebug AutoDetect</string>
+   <string>ServeDebug 智能嵌入式调试终端</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* ========== 全局样式表 ========== */
+
+/* 1. 基础色调定义 */
+QWidget {
+        background-color: #f5f6fa; /* 整体背景灰 */
+        color: #2f3640;            /* 全局文字深灰 */
+        font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;, sans-serif;
+        font-size: 10pt;
+}
+
+/* 2. 左侧侧边栏风格 */
+QFrame#frameSidebar {
+        background-color: #ffffff;
+        border-right: 1px solid #dcdde1;
+}
+
+/* 3. 按钮通用风格 */
+QPushButton {
+        border: 1px solid #dcdde1;
+        border-radius: 6px;
+        background-color: #f5f6fa;
+        padding: 6px 12px;
+        min-height: 20px;
+}
+QPushButton:hover {
+        background-color: #e1e4ea;
+        border-color: #c4c7cc;
+}
+QPushButton:pressed {
+        background-color: #d1d4db;
+        padding-top: 7px; /* 按下位移感 */
+        padding-left: 13px;
+}
+
+/* 4. 主要操作按钮（连接）- 蓝色高亮 */
+QPushButton#btnConnect {
+        background-color: #0097e6;
+        color: white;
+        border: 1px solid #0084c9;
+        font-weight: bold;
+        font-size: 11pt;
+        padding: 8px;
+}
+QPushButton#btnConnect:hover {
+        background-color: #00a8ff;
+}
+QPushButton#btnConnect:pressed {
+        background-color: #0084c9;
+}
+QPushButton#btnConnect:disabled {
+        background-color: #bdc3c7;
+        border-color: #bdc3c7;
+}
+
+/* 5. 危险操作按钮（断开）- 红色高亮 */
+QPushButton#btnDisconnect {
+        background-color: #e84118;
+        color: white;
+        border: 1px solid #c23616;
+        padding: 8px;
+}
+QPushButton#btnDisconnect:hover {
+        background-color: #ff4d4d;
+}
+QPushButton#btnDisconnect:pressed {
+        background-color: #c23616;
+}
+
+/* 6. 输入控件风格 */
+QComboBox, QLineEdit {
+        border: 1px solid #dcdde1;
+        border-radius: 4px;
+        padding: 4px 8px;
+        background-color: white;
+        selection-background-color: #0097e6;
+}
+QComboBox:focus, QLineEdit:focus {
+        border: 1px solid #0097e6;
+}
+QComboBox::drop-down {
+        border: none;
+        width: 20px;
+}
+
+/* 7. 设备列表风格 */
+QListWidget {
+        border: 1px solid #dcdde1;
+        border-radius: 4px;
+        background-color: #ffffff;
+        outline: none;
+}
+QListWidget::item {
+        height: 32px;
+        padding-left: 4px;
+        border-bottom: 1px solid #f0f0f0;
+}
+QListWidget::item:selected {
+        background-color: #eaf4fd;
+        color: #0097e6;
+        border-left: 3px solid #0097e6;
+}
+QListWidget::item:hover:!selected {
+        background-color: #f5f6fa;
+}
+
+/* 8. 日志终端风格 */
+QPlainTextEdit#textLog {
+        background-color: #000000; /* 深色背景 */
+        color: #ffffff;
+        border-radius: 6px;
+        font-family: &quot;Consolas&quot;, &quot;Courier New&quot;, monospace;
+        font-size: 11pt;
+        selection-background-color: #34ace0;
+        selection-color: white;
+}
+
+/* 9. 滚动条美化 */
+QScrollBar:vertical {
+        border: none;
+        background: #f1f1f1;
+        width: 10px;
+        margin: 0px;
+}
+QScrollBar::handle:vertical {
+        background: #bdc3c7;
+        min-height: 20px;
+        border-radius: 5px;
+}
+QScrollBar::handle:vertical:hover {
+        background: #95a5a6;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+        height: 0px;
+}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_Main">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>设备检测</string>
+     <widget class="QFrame" name="frameSidebar">
+      <property name="minimumSize">
+       <size>
+        <width>260</width>
+        <height>0</height>
+       </size>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_Sidebar">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <property name="leftMargin">
+        <number>15</number>
+       </property>
+       <property name="topMargin">
+        <number>20</number>
+       </property>
+       <property name="rightMargin">
+        <number>15</number>
+       </property>
+       <property name="bottomMargin">
+        <number>20</number>
+       </property>
        <item>
-        <widget class="QListWidget" name="listDevices"/>
+        <widget class="QLabel" name="labelTitle">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: #2f3640;</string>
+         </property>
+         <property name="text">
+          <string>配置面板</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <widget class="QGroupBox" name="groupSettings">
+         <property name="title">
+          <string>通信参数</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="verticalSpacing">
+           <number>10</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelBaud">
+            <property name="text">
+             <string>波特率</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cbBaudRate">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentText">
+             <string>9600</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>9600</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>19200</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>38400</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>57600</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>115200</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="chkHexDisplay">
+            <property name="text">
+             <string>Hex 16进制显示</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupDevices">
+         <property name="title">
+          <string>设备选择</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_Devices">
+          <property name="spacing">
+           <number>8</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="layoutDeviceHeader">
+            <item>
+             <widget class="QLabel" name="labelDeviceCount">
+              <property name="styleSheet">
+               <string notr="true">color: #7f8c8d; font-size: 9pt;</string>
+              </property>
+              <property name="text">
+               <string>扫描中...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_Devices">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnManualRefresh">
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>刷新</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QListWidget" name="listDevices">
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="layoutStatus">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <item>
-          <widget class="QPushButton" name="btnManualRefresh">
+          <widget class="QLabel" name="labelStatus">
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: #e84118;</string>
+           </property>
            <property name="text">
-            <string>刷新列表</string>
+            <string>🔴 未连接</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnConnect">
+          <widget class="QLabel" name="labelCurrentPort">
+           <property name="styleSheet">
+            <string notr="true">color: #7f8c8d; font-size: 9pt;</string>
+           </property>
            <property name="text">
-            <string>连接设备</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnDisconnect">
-           <property name="text">
-            <string>断开连接</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelDeviceCount">
-           <property name="text">
-            <string>找到 0 个设备</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -72,95 +394,161 @@
          </item>
         </layout>
        </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string>连接状态</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QLabel" name="labelStatus">
-         <property name="text">
-          <string>🔴 未连接</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelCurrentPort">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="verticalSpacer_Sidebar">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QPushButton" name="btnConnect">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>开始连接</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDisconnect">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>断开连接</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="title">
-       <string>系统日志</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+     <widget class="QWidget" name="widgetContent" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_Content">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>15</number>
+       </property>
+       <property name="topMargin">
+        <number>15</number>
+       </property>
+       <property name="rightMargin">
+        <number>15</number>
+       </property>
+       <property name="bottomMargin">
+        <number>15</number>
+       </property>
        <item>
-        <layout class="QHBoxLayout" name="logToolBar"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_LogTools">
+         <item>
+          <widget class="QLabel" name="labelLogTitle">
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>数据监控终端</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_Log">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnClearLog">
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>清空日志</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>12</width>
+             <height>12</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QPlainTextEdit" name="textLog">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>250</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">
-/* 系统日志终端风格 */
-#plainTextLog {
-    background-color: #ffffff;   /* 纯白背景 */
-    color: #333333;              /* 深灰文字，护眼对比度 */
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    padding: 4px;
-    font: 12pt &quot;Consolas&quot;, &quot;Courier New&quot;, &quot;思源黑体&quot;;
-    selection-background-color: #b3d9ff;  /* 选中高亮淡蓝 */
-}     </string>
-         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btnClearLog">
-         <property name="maximumSize">
-          <size>
-           <width>80</width>
-           <height>30</height>
-          </size>
+        <layout class="QHBoxLayout" name="layout_Send">
+         <property name="spacing">
+          <number>10</number>
          </property>
-         <property name="toolTip">
-          <string>清空日志</string>
-         </property>
-         <property name="text">
-          <string>清除</string>
-         </property>
-        </widget>
+         <item>
+          <widget class="QLineEdit" name="txtSend">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="placeholderText">
+            <string>请输入待发送的数据 (ASCII)...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnSend">
+           <property name="minimumSize">
+            <size>
+             <width>90</width>
+             <height>34</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+             background-color: #2f3542;
+             color: white;
+             font-weight: bold;
+             border: 1px solid #2f3542;
+            </string>
+           </property>
+           <property name="text">
+            <string>发送</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

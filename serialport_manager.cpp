@@ -43,6 +43,16 @@ bool SerialPortManager::connectToPort(const QString &portName, int baudRate)
     }
 }
 
+qint64 SerialPortManager::sendData(const QByteArray &data)
+{
+    if (!m_isConnected || !m_serialPort->isOpen()) return -1;
+
+    qint64 bytes = m_serialPort->write(data);
+    if (bytes > 0) {
+        emit bytesWritten(bytes); // 触发信号
+    }
+    return bytes;
+}
 void SerialPortManager::disconnectPort()
 {
     if (m_serialPort->isOpen()) {

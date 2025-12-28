@@ -10,7 +10,7 @@ class SerialPortManager : public QObject
 public:
     explicit SerialPortManager(QObject *parent = nullptr);
     ~SerialPortManager();
-
+qint64 sendData(const QByteArray &data); // 发送数据函数
     bool connectToPort(const QString &portName, int baudRate = 115200);
     void disconnectPort();
     bool isConnected() const;
@@ -21,7 +21,7 @@ signals:
     void disconnected();
     void dataReceived(const QByteArray &data);
     void errorOccurred(const QString &error);
-
+    void bytesWritten(qint64 bytes); // 发送成功信号
 
 private slots:
     void onReadyRead();

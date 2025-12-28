@@ -76,25 +76,28 @@ void AutoDetectManager::scanPorts()
 bool AutoDetectManager::checkIfServeDebug(const QSerialPortInfo &info)
 {
     // 方法1: 通过 VID/PID 识别（最可靠）
-    if (info.hasVendorIdentifier() && info.hasProductIdentifier()) {
-        if (info.vendorIdentifier() == m_vendorId &&
-            info.productIdentifier() == m_productId) {
+        if (info.hasVendorIdentifier() && info.hasProductIdentifier()) {
+            if (info.vendorIdentifier() == m_vendorId &&
+                info.productIdentifier() == m_productId) {
+                return true;
+            }
+        }
+
+        // 方法2: 通过设备描述识别
+        QString description = info.description().toLower();
+        // 【修改开始】
+        if (description.contains("serial") || description.contains("ch340") ||
+            description.contains("cp210") || description.contains("ft232") ||
+            description.contains("usb")) {
+            // 既然匹配了常见串口关键字，应该返回 true
             return true;
         }
-    }
+        // 【修改结束】
 
-    // 方法2: 通过设备描述识别
-    QString description = info.description().toLower();
-    if (description.contains("serial") || description.contains("ch340") ||
-        description.contains("cp210") || description.contains("ft232")) {
-        // 可能是串口设备，继续验证
-    } else {
-        return false;
-    }
         return false;
 }
-    // 方法3: 通过握手协议验证（如果需要更精确的识别）
-/*    if (m_useHandshake) {
+
+/*if (m_useHandshake) {
         return handshakeWithDevice(info);
     }
 
@@ -135,4 +138,5 @@ bool AutoDetectManager::handshakeWithDevice(const QSerialPortInfo &info)
     port.close();
     return false;
 }
+
 */
