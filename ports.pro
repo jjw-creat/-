@@ -30,9 +30,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     MainWindow.xml \
     images/logo.ico \
-    logo.ico
+    logo.ico \
+    logo.rc
 
 RESOURCES += \
     resources.qrc
 
-RC_ICON=logo.ico
+RC_FILE+=logo.rc

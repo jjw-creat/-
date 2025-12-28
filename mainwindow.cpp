@@ -158,11 +158,10 @@ void MainWindow::on_btnConnect_clicked()
         QMessageBox::warning(this, "警告", "请先选择一个设备");
         return;
     }
-
     QString portName = currentItem->text().split(" - ").first();
     int baudRate = ui->cbBaudRate->currentText().toInt();
     logMessage(QString("正在连接: %1").arg(portName));
-    m_serialManager->connectToPort(portName);
+    m_serialManager->connectToPort(portName, baudRate);
 
 }
 
